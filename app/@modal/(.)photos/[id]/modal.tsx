@@ -1,30 +1,45 @@
 'use client';
 
-import { type ElementRef, useEffect, useRef } from 'react';
+import {useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation';
-import { createPortal } from 'react-dom';
+import {
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  Sheet,
+  SheetClose
+} from "@/components/ui/sheet";
 
 export function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const dialogRef = useRef<ElementRef<'dialog'>>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   useEffect(() => {
-    if (!dialogRef.current?.open) {
-      dialogRef.current?.showModal();
+    if (!isSheetOpen) {
+      setIsSheetOpen(true);
     }
   }, []);
 
   function onDismiss() {
-    router.back();
+    setIsSheetOpen(false);
+    setTimeout(() => {
+      router.back();
+    }, 400);
   }
 
-  return createPortal(
-    <div className="modal-backdrop">
-      <dialog ref={dialogRef} className="modal" onClose={onDismiss}>
-        {children}
-        <button onClick={onDismiss} className="close-button" />
-      </dialog>
-    </div>,
-    document.getElementById('modal-root')!
-  );
+  return <Sheet open={isSheetOpen}>
+    <SheetContent>
+      <SheetClose>
+        <button onClick={onDismiss}>Close</button>
+      </SheetClose>
+      <SheetHeader>
+        <SheetTitle>Are you absolutely sure?</SheetTitle>
+        <SheetDescription>
+          {children}
+        </SheetDescription>
+      </SheetHeader>
+    </SheetContent>
+  </Sheet>
+
 }

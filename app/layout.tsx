@@ -16,7 +16,6 @@ export default function RootLayout(props: {
       <body>
         {props.children}
         {props.modal}
-        <div id="modal-root" />
       </body>
     </html>
   );
